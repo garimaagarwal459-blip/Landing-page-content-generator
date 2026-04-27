@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Generation Tool</title>
+    <style>
+        :root {
+            color-scheme: light;
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 16px;
+            background: linear-gradient(180deg, #f8fafc 0%, #eff5fb 100%);
+        }
+
+        .page-shell {
+            width: min(1100px, 100%);
+        }
+
+        .hero {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(2rem, 2.5vw, 3rem);
+            line-height: 1.05;
+        }
+
+        .hero p {
+            margin: 0;
+            max-width: 760px;
+            color: #4b5563;
+            font-size: 1rem;
+            line-height: 1.7;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 24px;
+            box-shadow: 0 28px 80px rgba(15, 23, 42, 0.08);
+            padding: 32px;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .field {
+            display: grid;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .field small {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-size: 0.98rem;
+            color: #0f172a;
+            background: #f8fafc;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+            background: #ffffff;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .inline-group {
+            display: grid;
+            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+
+        .note {
+            padding: 16px 20px;
+            border-radius: 18px;
+            background: #eef2ff;
+            border: 1px solid #dbeafe;
+            color: #4338ca;
+            font-size: 0.95rem;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 4px;
+        }
+
+        button {
+            border: none;
+            border-radius: 16px;
+            background: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            padding: 16px 26px;
+            font-size: 1rem;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .results {
+            margin-top: 30px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .results-header {
+            padding: 18px 24px;
+            background: #eef2ff;
+            font-weight: 700;
+            color: #1e3a8a;
+        }
+
+        .results-content {
+            padding: 20px;
+            white-space: pre-wrap;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+            font-size: 0.95rem;
+            color: #111827;
+            line-height: 1.6;
+        }
+
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.95rem;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+    <main class="page-shell">
+        <section class="hero">
+            <span style="font-size:0.9rem; letter-spacing:0.28em; text-transform:uppercase; color:#2563eb;">SEO Content Generator</span>
+            <h1>Landing Page Content Generator</h1>
+        </section>
+
+        <section class="card">
+            <form id="generateForm" class="form-grid">
+                <div class="field">
+                    <label for="url">Website URL</label>
+                    <input type="text" id="url" name="url" placeholder="https://example.com/collections/summer-sale" required>
+                </div>
+
+                <div class="field">
+                    <label for="requirements">Design Requirements</label>
+                    <textarea id="requirements" name="requirements" placeholder="Enter any design or messaging requirements for the page."></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="keywords">Keywords</label>
+                    <input type="text" id="keywords" name="keywords" placeholder="Primary keyword, secondary keyword 1, secondary keyword 2">
+                    <small>Enter comma-separated keywords. The first keyword will be used as the primary focus and the rest as secondary.</small>
+                </div>
+
+                <div class="field">
+                    <label for="brand_guidelines">Brand Guidelines</label>
+                    <textarea id="brand_guidelines" name="brand_guidelines" placeholder="Tone: Friendly and approachable. Voice: We speak like a knowledgeable friend, not a salesperson. Avoid jargon."></textarea>
+                </div>
+
+                <div class="field">
+                    <label for="preapproved_content">Existing Approved Content</label>
+                    <textarea id="preapproved_content" name="preapproved_content" placeholder="Paste existing approved copy, taglines, or messaging that must appear in the page."></textarea>
+                </div>
+
+                <div class="inline-group">
+                    <div class="field">
+                        <label for="provider">AI Provider</label>
+                        <select id="provider" name="provider">
+                            <option value="claude">Claude</option>
+                            <option value="openai">OpenAI</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="page_type">Page Type</label>
+                        <select id="page_type" name="page_type">
+                            <option value="service_area">Service Area</option>
+                            <option value="seasonal">Seasonal Landing</option>
+                            <option value="landing">General Landing</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field" id="locationField">
+                    <label for="locations">Location</label>
+                    <input type="text" id="locations" name="locations" placeholder="New York, Los Angeles">
+                    <small>Enter location names. Use comma-separated values for multiple service-area pages.</small>
+                </div>
+
+                <div class="button-row">
+                    <button type="submit">Generate Collection Content</button>
+                </div>
+            </form>
+
+            <div id="results" class="results" style="display:none;">
+                <div class="results-header">Generated Output</div>
+                <div class="results-content" id="resultsContent"></div>
+            </div>
+        </section>
+
+        <p class="footer-note">NOTE: This UI is styled for clarity and better UX. All functional behavior remains unchanged.</p>
+    </main>
+
+    <script>
+        const form = document.getElementById('generateForm');
+        const resultsPanel = document.getElementById('results');
+        const resultsContent = document.getElementById('resultsContent');
+        const pageTypeInput = document.getElementById('page_type');
+        const locationField = document.getElementById('locationField');
+
+        function updateLocationFieldVisibility() {
+            if (pageTypeInput.value === 'service_area') {
+                locationField.style.display = 'block';
+            } else {
+                locationField.style.display = 'none';
+            }
+        }
+
+        pageTypeInput.addEventListener('change', updateLocationFieldVisibility);
+        updateLocationFieldVisibility();
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = {
+                url: formData.get('url'),
+                requirements: formData.get('requirements'),
+                keywords: formData.get('keywords'),
+                brand_guidelines: formData.get('brand_guidelines'),
+                preapproved_content: formData.get('preapproved_content'),
+                provider: formData.get('provider'),
+                page_type: formData.get('page_type'),
+                locations: formData.get('locations').split(',').map(s => s.trim()).filter(Boolean)
+            };
+
+            resultsPanel.style.display = 'block';
+            resultsContent.textContent = 'Generating content…';
+
+            try {
+                const response = await fetch('/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Request failed');
+                }
+
+                const result = await response.json();
+                resultsContent.innerHTML = '';
+
+                if (result.contents && typeof result.contents === 'object') {
+                    Object.entries(result.contents).forEach(([key, content]) => {
+                        const section = document.createElement('div');
+                        section.style.marginBottom = '24px';
+
+                        const title = document.createElement('h3');
+                        title.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+                        title.style.margin = '0 0 12px';
+                        title.style.fontSize = '1rem';
+                        title.style.color = '#1e3a8a';
+
+                        const pre = document.createElement('pre');
+                        pre.textContent = content;
+                        pre.style.whiteSpace = 'pre-wrap';
+                        pre.style.margin = '0';
+                        pre.style.fontFamily = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+                        pre.style.fontSize = '0.95rem';
+                        pre.style.lineHeight = '1.6';
+                        pre.style.color = '#111827';
+
+                        section.appendChild(title);
+                        section.appendChild(pre);
+                        resultsContent.appendChild(section);
+                    });
+                } else {
+                    resultsContent.textContent = JSON.stringify(result, null, 2);
+                }
+            } catch (error) {
+                resultsContent.textContent = 'Error: ' + error.message;
+            }
+        });
+    </script>
+</body>
+</html>

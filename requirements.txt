@@ -1,0 +1,6 @@
+requests
+beautifulsoup4
+openai
+flask
+anthropic
+python-dotenv
